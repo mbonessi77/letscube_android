@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
-import model.RoomInfo
+import com.example.letscube.model.RoomInfo
 
 class RoomAdapter : RecyclerView.Adapter<RoomViewHolder>() {
     var roomList = ArrayList<RoomInfo>()

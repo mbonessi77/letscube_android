@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
-import model.RoomInfo
+import com.example.letscube.model.RoomInfo
 
 class RoomListFragment : Fragment() {
     private val list = ArrayList<RoomInfo>()

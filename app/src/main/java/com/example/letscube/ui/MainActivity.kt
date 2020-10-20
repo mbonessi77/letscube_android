@@ -1,7 +1,5 @@
 package com.example.letscube.ui
 
-import android.content.Intent
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -10,50 +8,83 @@ import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import com.example.letscube.R
+import com.example.letscube.model.AccessToken
+import com.example.letscube.model.CurrentUser
+import com.example.letscube.retrofit.APIClass
+import com.example.letscube.retrofit.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
+{
     lateinit var toolbar: Toolbar
     lateinit var container: FrameLayout
-    lateinit var clientId: String
-    lateinit var clientSecret: String
-    lateinit var redirectUri: String
+    lateinit var username: String
+    lateinit var password: String
+    lateinit var networkLayer: RetrofitBuilder
+    lateinit var token: String
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        clientId = "bLytofP7iwfHysGmAFfQ1twAvtrNnN9rX9LwqFWffwM"
-        clientSecret = "siIv2MkZwfoyrpwGLNVg8j5m7eH3oZMEQUbnIUYUsYw"
-        redirectUri = "letscube.android://callback"
-
         container = findViewById(R.id.fragment_container)
         toolbar = findViewById(R.id.toolbar)
+        networkLayer = RetrofitBuilder()
 
         setSupportActionBar(toolbar)
 
         inflateFragment()
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        val uri: Uri? = intent.data
+    private fun doLogin()
+    {
+        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getAccessToken(username, password, "password")
+            .enqueue(object : Callback<AccessToken>
+            {
+                override fun onFailure(call: Call<AccessToken>, t: Throwable)
+                {
+                }
 
-        uri?.let {
-            Toast.makeText(this, "Successful", Toast.LENGTH_SHORT).show()
-        } ?: run {
-            Toast.makeText(this, "Failed", Toast.LENGTH_SHORT).show()
-        }
+                override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>)
+                {
+                    response.body()?.let {
+                        getUser(it.token)
+                    }
+                }
+
+            })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    fun getUser(token: String)
+    {
+        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getUser("Bearer $token").enqueue(
+            object : Callback<CurrentUser> {
+                override fun onFailure(call: Call<CurrentUser>, t: Throwable) {
+                    Toast.makeText(applicationContext, "Failed to get user", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<CurrentUser>, response: Response<CurrentUser>) {
+                    Toast.makeText(applicationContext, response.body()!!.user.wcaId, Toast.LENGTH_SHORT).show()
+                }
+
+            }
+        )
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean
+    {
         val inflater = menuInflater
         inflater.inflate(R.menu.item_menu, menu)
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
         return when(item.itemId) {
             R.id.login -> {
                 login()
@@ -76,15 +107,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun login() {
-        val loginIntent = Intent(Intent.ACTION_VIEW, Uri.parse(
-            "https://www.worldcubeassociation.org/oauth/authorize?client_id=$clientId&scope=:public+:email+:dob&redirect_uri=$redirectUri&response_type=token"
-        ))
-
-        startActivity(loginIntent)
+    private fun login()
+    {
+        val dialog = LoginDialog(this)
+        dialog.show(supportFragmentManager, "Login Dialog")
     }
 
-    private fun inflateFragment() {
+    private fun inflateFragment()
+    {
         supportFragmentManager.beginTransaction().replace(container.id, RoomListFragment()).commit()
+    }
+
+    override fun getEmailAndPassword(email: String, password: String)
+    {
+        username = email
+        this.password = password
+
+        doLogin()
     }
 }
