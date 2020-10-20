@@ -1,6 +1,6 @@
 package com.example.letscube.ui
 
-import RecyclerViewInfo.RoomAdapter
+import com.example.letscube.ui.recyclerViewInfo.RoomAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater

@@ -16,6 +16,7 @@ import com.example.letscube.model.AccessToken
 import com.example.letscube.model.CurrentUser
 import com.example.letscube.retrofit.APIClass
 import com.example.letscube.retrofit.RetrofitBuilder
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,6 +53,25 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     {
         val inflater = menuInflater
         inflater.inflate(R.menu.item_menu, menu)
+        return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean
+    {
+        super.onPrepareOptionsMenu(menu)
+        menu?.let {
+            it.clear()
+            if (sharedPref.contains(getString(R.string.access_token)))
+            {
+                menu.add(0, R.id.profile, Menu.NONE, getString(R.string.profile))
+                menu.add(0, R.id.logout, Menu.NONE, getString(R.string.sign_out))
+                getStoredUser()
+            }
+            else
+            {
+                menu.add(0, R.id.login, Menu.NONE, getString(R.string.login))
+            }
+        }
         return true
     }
 
@@ -115,7 +135,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
 
                 override fun onResponse(call: Call<CurrentUser>, response: Response<CurrentUser>) {
                     response.body()?.let {
-                        user = it
+                        saveUser(it)
                         Toast.makeText(applicationContext, "Signed in successfully", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -133,11 +153,33 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         }
     }
 
+    private fun saveUser(user: CurrentUser)
+    {
+        this.user = user
+        val editor = sharedPref.edit()
+        val gson = Gson()
+        val json = gson.toJson(user)
+        editor.putString(PREFS_STORE_USER, json)
+        editor.apply()
+    }
+
+    private fun getStoredUser()
+    {
+        val gson = Gson()
+        val json = sharedPref.getString(PREFS_STORE_USER, "")
+
+        if(!json.isNullOrEmpty())
+        {
+            user = gson.fromJson(json, CurrentUser::class.java)
+        }
+    }
+
     private fun logOut()
     {
         with(sharedPref.edit())
         {
             remove(getString(R.string.access_token))
+            remove(PREFS_STORE_USER)
             apply()
             Toast.makeText(applicationContext, "Logged out successfully", Toast.LENGTH_SHORT).show()
         }
@@ -183,5 +225,6 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     companion object
     {
         val INTENT_PROFILE_KEY = "current_user"
+        val PREFS_STORE_USER = "stored_user"
     }
 }

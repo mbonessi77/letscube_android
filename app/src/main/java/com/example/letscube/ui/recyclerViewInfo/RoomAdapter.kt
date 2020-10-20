@@ -1,7 +1,6 @@
-package RecyclerViewInfo
+package com.example.letscube.ui.recyclerViewInfo
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
@@ -20,8 +19,8 @@ class RoomAdapter : RecyclerView.Adapter<RoomViewHolder>() {
 
     override fun onBindViewHolder(holder: RoomViewHolder, position: Int) {
         when(roomList[position].isPrivate) {
-            true -> holder.privateImage.visibility = View.VISIBLE
-            else -> holder.privateImage.visibility = View.GONE
+            true -> holder.privateImage.setBackgroundResource(R.drawable.ic_private_room)
+            else -> holder.privateImage.setBackgroundResource(R.drawable.ic_public)
         }
         holder.roomName.text = roomList[position].roomName
         holder.userCount.text = "${roomList[position].userCount} users"

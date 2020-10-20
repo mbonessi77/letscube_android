@@ -1,4 +1,4 @@
-package RecyclerViewInfo
+package com.example.letscube.ui.recyclerViewInfo
 
 import android.view.View
 import android.widget.ImageView
