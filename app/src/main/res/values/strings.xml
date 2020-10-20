@@ -3,4 +3,5 @@
     <string name="login">Login</string>
     <string name="sign_out">Sign Out</string>
     <string name="profile">Profile</string>
+    <string name="access_token">prefs_token</string>
 </resources>

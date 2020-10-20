@@ -1,5 +1,8 @@
 package com.example.letscube.ui
 
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -24,7 +27,10 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     lateinit var username: String
     lateinit var password: String
     lateinit var networkLayer: RetrofitBuilder
-    lateinit var token: String
+    lateinit var progressDialog: ProgressDialog
+    lateinit var user: CurrentUser
+
+    lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -34,47 +40,13 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         container = findViewById(R.id.fragment_container)
         toolbar = findViewById(R.id.toolbar)
         networkLayer = RetrofitBuilder()
+        sharedPref = getPreferences(Context.MODE_PRIVATE)
 
         setSupportActionBar(toolbar)
 
         inflateFragment()
     }
 
-
-    private fun doLogin()
-    {
-        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getAccessToken(username, password, "password")
-            .enqueue(object : Callback<AccessToken>
-            {
-                override fun onFailure(call: Call<AccessToken>, t: Throwable)
-                {
-                }
-
-                override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>)
-                {
-                    response.body()?.let {
-                        getUser(it.token)
-                    }
-                }
-
-            })
-    }
-
-    fun getUser(token: String)
-    {
-        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getUser("Bearer $token").enqueue(
-            object : Callback<CurrentUser> {
-                override fun onFailure(call: Call<CurrentUser>, t: Throwable) {
-                    Toast.makeText(applicationContext, "Failed to get user", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onResponse(call: Call<CurrentUser>, response: Response<CurrentUser>) {
-                    Toast.makeText(applicationContext, response.body()!!.user.wcaId, Toast.LENGTH_SHORT).show()
-                }
-
-            }
-        )
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
     {
@@ -92,7 +64,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
             }
 
             R.id.logout -> {
-                Toast.makeText(applicationContext, "Will Logout", Toast.LENGTH_SHORT).show()
+                logOut()
                 true
             }
 
@@ -105,6 +77,77 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
                 super.onOptionsItemSelected(item)
             }
         }
+    }
+
+    private fun doLogin()
+    {
+        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getAccessToken(username, password, "password")
+            .enqueue(object : Callback<AccessToken>
+            {
+                override fun onFailure(call: Call<AccessToken>, t: Throwable)
+                {
+                    clearEmailAndPassword()
+                    progressDialog.cancel()
+                    Toast.makeText(applicationContext, "Login Failed", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>)
+                {
+                    clearEmailAndPassword()
+                    progressDialog.cancel()
+                    response.body()?.let {
+                        saveAccessToken(it)
+                        getUser(it.token)
+                    } ?: run {
+                        Toast.makeText(applicationContext, "Login Failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            })
+    }
+
+    fun getUser(token: String)
+    {
+        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getUser("Bearer $token").enqueue(
+            object : Callback<CurrentUser> {
+                override fun onFailure(call: Call<CurrentUser>, t: Throwable) {
+                    Toast.makeText(applicationContext, "Failed to get user", Toast.LENGTH_SHORT).show()
+                }
+
+                override fun onResponse(call: Call<CurrentUser>, response: Response<CurrentUser>) {
+                    response.body()?.let {
+                        user = it
+                        Toast.makeText(applicationContext, "Signed in successfully", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            }
+        )
+    }
+
+    private fun saveAccessToken(token: AccessToken)
+    {
+        with(sharedPref.edit())
+        {
+            putString(getString(R.string.access_token), token.token)
+            apply()
+        }
+    }
+
+    private fun logOut()
+    {
+        with(sharedPref.edit())
+        {
+            remove(getString(R.string.access_token))
+            apply()
+            Toast.makeText(applicationContext, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        }
+
+    }
+
+    private fun clearEmailAndPassword()
+    {
+        username = ""
+        password = ""
     }
 
     private fun login()
@@ -122,6 +165,10 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     {
         username = email
         this.password = password
+
+        progressDialog = ProgressDialog(this)
+        progressDialog.setMessage("Logging in...")
+        progressDialog.show()
 
         doLogin()
     }
