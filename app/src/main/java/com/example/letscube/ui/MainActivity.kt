@@ -2,6 +2,7 @@ package com.example.letscube.ui
 
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -29,7 +30,6 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     lateinit var networkLayer: RetrofitBuilder
     lateinit var progressDialog: ProgressDialog
     lateinit var user: CurrentUser
-
     lateinit var sharedPref: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
             }
 
             R.id.profile -> {
-                Toast.makeText(applicationContext, "View Profile", Toast.LENGTH_SHORT).show()
+                viewProfile()
                 true
             }
 
@@ -144,6 +144,13 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
 
     }
 
+    private fun viewProfile()
+    {
+        val intent = Intent(this, UserProfileActivity::class.java)
+        intent.putExtra(INTENT_PROFILE_KEY, user)
+        startActivity(intent)
+    }
+
     private fun clearEmailAndPassword()
     {
         username = ""
@@ -171,5 +178,10 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         progressDialog.show()
 
         doLogin()
+    }
+
+    companion object
+    {
+        val INTENT_PROFILE_KEY = "current_user"
     }
 }

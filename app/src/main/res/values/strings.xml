@@ -4,4 +4,5 @@
     <string name="sign_out">Sign Out</string>
     <string name="profile">Profile</string>
     <string name="access_token">prefs_token</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
 </resources>

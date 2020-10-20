@@ -1,8 +1,11 @@
 package com.example.letscube.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class User {
+public class User implements Parcelable {
     @SerializedName("class") private String myClass;
     @SerializedName("url") private String url;
     @SerializedName("id") private String id;
@@ -13,7 +16,33 @@ public class User {
     @SerializedName("delegate_status") private String delegateStatus;
     @SerializedName("created_at") private String createdAt;
     @SerializedName("updated_at") private String updatedAt;
-    @SerializedName("avatar") private model.Avatar avatar;
+    @SerializedName("avatar") private Avatar avatar;
+
+    protected User(Parcel in) {
+        myClass = in.readString();
+        url = in.readString();
+        id = in.readString();
+        wcaId = in.readString();
+        name = in.readString();
+        gender = (char) in.readInt();
+        country = in.readString();
+        delegateStatus = in.readString();
+        createdAt = in.readString();
+        updatedAt = in.readString();
+        avatar = in.readParcelable(Avatar.class.getClassLoader());
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 
     public String getMyClass() {
         return myClass;
@@ -95,11 +124,31 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public model.Avatar getAvatar() {
+    public Avatar getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(model.Avatar avatar) {
+    public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(myClass);
+        dest.writeString(url);
+        dest.writeString(id);
+        dest.writeString(wcaId);
+        dest.writeString(name);
+        dest.writeInt((int) gender);
+        dest.writeString(country);
+        dest.writeString(delegateStatus);
+        dest.writeString(createdAt);
+        dest.writeString(updatedAt);
+        dest.writeParcelable(avatar, flags);
     }
 }
