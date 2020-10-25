@@ -1,4 +1,4 @@
-package com.example.letscube.ui.recyclerViewInfo
+package com.example.letscube.ui.room_list_recyclerview
 
 interface ItemClickListener
 {

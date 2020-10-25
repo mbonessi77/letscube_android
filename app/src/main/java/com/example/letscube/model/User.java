@@ -32,6 +32,11 @@ public class User implements Parcelable {
         avatar = in.readParcelable(Avatar.class.getClassLoader());
     }
 
+    public User(String name)
+    {
+        this.name = name;
+    }
+
     public static final Creator<User> CREATOR = new Creator<User>() {
         @Override
         public User createFromParcel(Parcel in) {

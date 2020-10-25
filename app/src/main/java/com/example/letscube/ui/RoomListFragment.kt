@@ -1,7 +1,7 @@
 package com.example.letscube.ui
 
 import android.content.Intent
-import com.example.letscube.ui.recyclerViewInfo.RoomAdapter
+import com.example.letscube.ui.room_list_recyclerview.RoomAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
 import com.example.letscube.model.RoomInfo
-import com.example.letscube.ui.recyclerViewInfo.ItemClickListener
+import com.example.letscube.ui.room_list_recyclerview.ItemClickListener
 import com.example.letscube.ui.room_info.RoomActivity
 
 class RoomListFragment : Fragment(), ItemClickListener
