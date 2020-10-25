@@ -6,11 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
 import com.example.letscube.model.RoomInfo
 
-class RoomAdapter : RecyclerView.Adapter<RoomViewHolder>() {
+class RoomAdapter(val listener: ItemClickListener) : RecyclerView.Adapter<RoomViewHolder>() {
     var roomList = ArrayList<RoomInfo>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RoomViewHolder {
-        val view =  LayoutInflater.from(parent.context).inflate(R.layout.room_item_view, parent, false)
-        return RoomViewHolder(view.findViewById(R.id.iv_private_room), view.findViewById(R.id.tv_room_name), view.findViewById(R.id.tv_user_count), view)
+        return RoomViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.room_item_view, parent, false))
     }
 
     override fun getItemCount(): Int {
@@ -24,6 +23,9 @@ class RoomAdapter : RecyclerView.Adapter<RoomViewHolder>() {
         }
         holder.roomName.text = roomList[position].roomName
         holder.userCount.text = "${roomList[position].userCount} users"
+        holder.itemView.setOnClickListener {
+            listener.enterRoom(roomList[position].roomId)
+        }
     }
 
     fun setDataSet(list: ArrayList<RoomInfo>) {
