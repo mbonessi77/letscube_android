@@ -1,17 +1,18 @@
 package com.example.letscube.ui
 
+import android.content.Intent
 import com.example.letscube.ui.recyclerViewInfo.RoomAdapter
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.letscube.R
 import com.example.letscube.model.RoomInfo
 import com.example.letscube.ui.recyclerViewInfo.ItemClickListener
+import com.example.letscube.ui.room_info.RoomActivity
 
 class RoomListFragment : Fragment(), ItemClickListener
 {
@@ -46,6 +47,7 @@ class RoomListFragment : Fragment(), ItemClickListener
 
     override fun enterRoom(roomId: String)
     {
-        Toast.makeText(context, "Entering room with id $roomId", Toast.LENGTH_SHORT).show()
+        val intent = Intent(context, RoomActivity::class.java)
+        startActivity(intent)
     }
 }
