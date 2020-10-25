@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/timer_options"
+        android:title="@string/timer_options"/>
+
+    <item
+        android:id="@+id/edit_room"
+        android:title="@string/edit_room"/>
+
+    <item
+        android:id="@+id/delete_room"
+        android:title="@string/delete_room"/>
+
+    <item
+        android:id="@+id/manage_users"
+        android:title="@string/manage_users"/>
+</menu>

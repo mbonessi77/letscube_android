@@ -8,12 +8,48 @@
     tools:context=".ui.room_info.ChatFragment">
 
     <TextView
+        android:id="@+id/tv_scramble"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Solve Fragment"
+        android:text="R' U2 B2 R' F2 L2 F2 D2 R D2 R' F' D' U2 F L B L U' R' F"
+        android:layout_margin="8dp"
+        android:textSize="16sp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_solve_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0.00"
+        android:textSize="64sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/tv_current_ao5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Current ao5: "
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_solve_timer"
+        app:layout_constraintStart_toStartOf="@id/tv_solve_timer"
+        app:layout_constraintEnd_toEndOf="@id/tv_solve_timer"
+        />
+
+    <TextView
+        android:id="@+id/tv_best_ao5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Best ao5:"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/tv_current_ao5"
+        app:layout_constraintStart_toStartOf="@id/tv_current_ao5"
+        app:layout_constraintEnd_toEndOf="@id/tv_current_ao5"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

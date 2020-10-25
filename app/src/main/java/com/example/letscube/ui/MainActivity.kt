@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
     {
         val inflater = menuInflater
-        inflater.inflate(R.menu.item_menu, menu)
+        inflater.inflate(R.menu.room_list_menu, menu)
         return true
     }
 

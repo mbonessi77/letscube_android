@@ -2,6 +2,10 @@ package com.example.letscube.ui.room_info
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
 import com.example.letscube.R
 import com.google.android.material.tabs.TabLayout
@@ -10,16 +14,81 @@ class RoomActivity : AppCompatActivity()
 {
     lateinit var tabLayout: TabLayout
     lateinit var pager: ViewPager
+    lateinit var toolbar: Toolbar
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
 
+        setToolbar()
         setTabs()
         setPager()
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean
+    {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.solve_room_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        return when(item.itemId)
+        {
+            R.id.timer_options  ->
+            {
+                openTimerSettings()
+                true
+            }
+
+            R.id.edit_room ->
+            {
+                editRoom()
+                true
+            }
+
+            R.id.delete_room ->
+            {
+                deleteRoom()
+                true
+            }
+
+            R.id.manage_users ->
+            {
+                manageUsers()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun openTimerSettings()
+    {
+        Toast.makeText(applicationContext, "Timer Settings", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun editRoom()
+    {
+        Toast.makeText(applicationContext, "Edit Room", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun deleteRoom()
+    {
+        Toast.makeText(this, "Delete Room", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun manageUsers()
+    {
+        Toast.makeText(this, "Manage Users", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setToolbar()
+    {
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
+    }
 
     private fun setTabs()
     {

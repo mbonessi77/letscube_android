@@ -2,9 +2,11 @@
     <string name="app_name">Let\'s Cube</string>
     <string name="login">Login</string>
     <string name="sign_out">Sign Out</string>
+    <string name="timer_options">Timer Options</string>
+    <string name="edit_room">Edit Room</string>
+    <string name="delete_room">Delete Room</string>
+    <string name="manage_users">Manage Users</string>
     <string name="profile">Profile</string>
     <string name="access_token">prefs_token</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
