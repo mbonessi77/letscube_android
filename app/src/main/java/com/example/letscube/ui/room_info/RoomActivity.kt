@@ -8,10 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.viewpager.widget.ViewPager
 import com.example.letscube.R
-import com.example.letscube.ui.TimerOptionsDialog
 import com.google.android.material.tabs.TabLayout
 
-class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsListener
+class RoomActivity : AppCompatActivity()
 {
     lateinit var tabLayout: TabLayout
     lateinit var pager: ViewPager
@@ -67,8 +66,7 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
 
     private fun openTimerSettings()
     {
-        val dialog = TimerOptionsDialog(this)
-        dialog.show(supportFragmentManager, "Timer Options Dialog")
+        Toast.makeText(applicationContext, "Timer Settings", Toast.LENGTH_SHORT).show()
     }
 
     private fun editRoom()
@@ -119,10 +117,5 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
         val pagerAdapter = PagerAdapter(supportFragmentManager, tabLayout.tabCount)
         pager.adapter = pagerAdapter
         pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-    }
-
-    override fun saveTimerOptions(isUsingInspection: Boolean, inputMethod: String)
-    {
-        Toast.makeText(this, "TODO: save options", Toast.LENGTH_SHORT).show()
     }
 }

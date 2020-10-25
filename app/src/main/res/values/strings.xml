@@ -9,4 +9,9 @@
     <string name="profile">Profile</string>
     <string name="access_token">prefs_token</string>
     <string name="title_activity_user_profile">UserProfileActivity</string>
+
+    <string-array name="input_spinner_array">
+        <item>Internal Timer</item>
+        <item>Manual</item>
+    </string-array>
 </resources>
