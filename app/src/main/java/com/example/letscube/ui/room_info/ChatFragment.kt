@@ -21,10 +21,9 @@ class ChatFragment : Fragment()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        chatList.add(ChatMessageItem(User("Feliks Zemdegs"), "Nice solve Leo"))
-        chatList.add(ChatMessageItem(User("Tymon Kolasiński"), "Yeah dude what was that last layer?"))
-        chatList.add(ChatMessageItem(User("Leo Borromeo"), "Feesh to PLL skip"))
-        chatList.add(ChatMessageItem(User("Feliks Zemdegs"), "pog"))
+        chatList.add(ChatMessageItem(User("Test User 1"), "First test message"))
+        chatList.add(ChatMessageItem(User("Test User 2"), "Second test message"))
+        chatList.add(ChatMessageItem(User("Test User 1"), "Another test message"))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?

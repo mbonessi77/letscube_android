@@ -1,5 +1,7 @@
 package com.example.letscube.ui.room_info
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -16,11 +18,14 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
     lateinit var tabLayout: TabLayout
     lateinit var pager: ViewPager
     lateinit var toolbar: Toolbar
+    lateinit var sharedPrefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_room)
+
+        sharedPrefs = getPreferences(Context.MODE_PRIVATE)
 
         setToolbar()
         setTabs()
@@ -123,6 +128,11 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
 
     override fun saveTimerOptions(isUsingInspection: Boolean, inputMethod: String)
     {
-        Toast.makeText(this, "TODO: Save timer options", Toast.LENGTH_SHORT).show()
+        with(sharedPrefs.edit())
+        {
+            putBoolean("usingInspection", isUsingInspection)
+            putString("inputMethod", inputMethod)
+            apply()
+        }
     }
 }

@@ -38,7 +38,7 @@ class TimerOptionsDialog(val listener: SaveTimerOptionsListener) : DialogFragmen
 
             builder.setView(inflater)
                 .setPositiveButton("Save") { _, _ ->
-                    listener.saveTimerOptions(usingInspection.isSelected, selectedInput)
+                    listener.saveTimerOptions(usingInspection.isChecked, selectedInput)
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.cancel()
