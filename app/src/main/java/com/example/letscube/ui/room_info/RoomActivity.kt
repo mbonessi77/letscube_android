@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.MutableLiveData
 import androidx.viewpager.widget.ViewPager
 import com.example.letscube.R
 import com.example.letscube.ui.TimerOptionsDialog
@@ -19,6 +20,9 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
     lateinit var pager: ViewPager
     lateinit var toolbar: Toolbar
     lateinit var sharedPrefs: SharedPreferences
+    lateinit var inspectionLiveData: MutableLiveData<Boolean>
+    lateinit var timerLiveData: MutableLiveData<String>
+    lateinit var listener: UpdateSolveFragment
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -30,6 +34,21 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
         setToolbar()
         setTabs()
         setPager()
+        initLiveData()
+    }
+
+    private fun initLiveData()
+    {
+        inspectionLiveData = MutableLiveData()
+        timerLiveData = MutableLiveData()
+
+        inspectionLiveData.observeForever {
+            listener.updateInspection(it)
+        }
+
+        timerLiveData.observeForever {
+            listener.updateUi(it)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean
@@ -126,8 +145,23 @@ class RoomActivity : AppCompatActivity(), TimerOptionsDialog.SaveTimerOptionsLis
         pager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
     }
 
+    fun setCurrentListener(listener: UpdateSolveFragment)
+    {
+        this.listener = listener
+    }
+
     override fun saveTimerOptions(isUsingInspection: Boolean, inputMethod: String)
     {
+        if (inspectionLiveData.value != isUsingInspection)
+        {
+            inspectionLiveData.postValue(isUsingInspection)
+        }
+
+        if (timerLiveData.value.toString() != inputMethod)
+        {
+            timerLiveData.postValue(inputMethod)
+        }
+
         with(sharedPrefs.edit())
         {
             putBoolean("usingInspection", isUsingInspection)

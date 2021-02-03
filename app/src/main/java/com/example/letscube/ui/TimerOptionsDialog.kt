@@ -2,6 +2,8 @@ package com.example.letscube.ui
 
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -17,10 +19,12 @@ class TimerOptionsDialog(val listener: SaveTimerOptionsListener) : DialogFragmen
     lateinit var usingInspection: CheckBox
     lateinit var  inputOptionsSpinner: Spinner
     lateinit var selectedInput: String
+    lateinit var sharedPreferences: SharedPreferences
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
             val inflater = requireActivity().layoutInflater.inflate(R.layout.dialog_timer_options, null)
+            sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE)
 
             inputOptionsSpinner = inflater.findViewById(R.id.input_spinner)
             usingInspection = inflater.findViewById(R.id.inspection_checkbox)
@@ -35,6 +39,7 @@ class TimerOptionsDialog(val listener: SaveTimerOptionsListener) : DialogFragmen
             inputOptionsSpinner.onItemSelectedListener = this
 
             selectedInput = inputOptionsSpinner.getItemAtPosition(0).toString()
+            usingInspection.isChecked = sharedPreferences.getBoolean("usingInspection", false)
 
             builder.setView(inflater)
                 .setPositiveButton("Save") { _, _ ->

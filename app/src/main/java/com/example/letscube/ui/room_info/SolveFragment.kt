@@ -14,7 +14,7 @@ import com.example.letscube.R
 import com.google.android.material.textfield.TextInputLayout
 import java.util.*
 
-class SolveFragment : Fragment(), Runnable {
+class SolveFragment : Fragment(), Runnable, UpdateSolveFragment {
 
     var seconds: Int = 0
     var running: Boolean = false
@@ -66,11 +66,16 @@ class SolveFragment : Fragment(), Runnable {
                         startStopSolveTimer()
                     }
                 }
-            } else {
+            } else if (inputMethod.equals("Internal Timer")) {
                 startStopSolveTimer()
             }
         }
         return v
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as RoomActivity).setCurrentListener(this)
     }
 
     private fun startStopSolveTimer()
@@ -134,5 +139,24 @@ class SolveFragment : Fragment(), Runnable {
     {
         usingInspection = sharedPrefs.getBoolean("usingInspection", false)
         inputMethod = sharedPrefs.getString("inputMethod", "Internal Timer")
+    }
+
+    override fun updateUi(input: String)
+    {
+        inputMethod = input
+        if (inputMethod.equals("Internal Timer"))
+        {
+            timerText.visibility = View.VISIBLE
+            timeInput.visibility = View.INVISIBLE
+        } else {
+            timerText.visibility = View.INVISIBLE
+            timeInput.visibility = View.VISIBLE
+            timerText.text = "0.00"
+        }
+    }
+
+    override fun updateInspection(inspection: Boolean)
+    {
+        usingInspection = inspection
     }
 }
