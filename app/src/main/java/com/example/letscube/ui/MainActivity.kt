@@ -1,6 +1,5 @@
 package com.example.letscube.ui
 
-import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -15,23 +14,21 @@ import com.example.letscube.R
 import com.example.letscube.model.AccessToken
 import com.example.letscube.model.CurrentUser
 import com.example.letscube.retrofit.APIClass
-import com.example.letscube.retrofit.RetrofitBuilder
+import com.example.letscube.retrofit.NetworkLayer
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
+class MainActivity : AppCompatActivity()
 {
     lateinit var toolbar: Toolbar
     lateinit var container: FrameLayout
-    lateinit var username: String
-    lateinit var password: String
-    lateinit var networkLayer: RetrofitBuilder
-    lateinit var progressDialog: ProgressDialog
+    lateinit var networkLayer: NetworkLayer
     lateinit var user: CurrentUser
     lateinit var sharedPref: SharedPreferences
+    var loggedIn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -40,12 +37,31 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
 
         container = findViewById(R.id.fragment_container)
         toolbar = findViewById(R.id.toolbar)
-        networkLayer = RetrofitBuilder()
+        networkLayer = NetworkLayer()
         sharedPref = getPreferences(Context.MODE_PRIVATE)
 
         setSupportActionBar(toolbar)
 
         inflateFragment()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        val uri = intent.data
+
+        if (uri != null && !loggedIn)
+        {
+            if (uri.toString().startsWith(NetworkLayer.callbackUri))
+            {
+                val code = uri.getQueryParameter("code")
+                if (code != null) {
+                    doLogin(code)
+                } else {
+                    Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
 
@@ -99,27 +115,28 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         }
     }
 
-    private fun doLogin()
+    private fun doLogin(code: String)
     {
-        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getAccessToken(username, password, "password")
-            .enqueue(object : Callback<AccessToken>
+        networkLayer.getRetrofitBuilder().create(APIClass::class.java).getAccessToken(
+            "authorization_code",
+            NetworkLayer.applicationId,
+            NetworkLayer.clientSecret,
+            code,
+            NetworkLayer.callbackUri).enqueue(object : Callback<AccessToken>
             {
                 override fun onFailure(call: Call<AccessToken>, t: Throwable)
                 {
-                    clearEmailAndPassword()
-                    progressDialog.cancel()
-                    Toast.makeText(applicationContext, "Login Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, t.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onResponse(call: Call<AccessToken>, response: Response<AccessToken>)
                 {
-                    clearEmailAndPassword()
-                    progressDialog.cancel()
                     response.body()?.let {
+                        loggedIn = true
                         saveAccessToken(it)
                         getUser(it.token)
                     } ?: run {
-                        Toast.makeText(applicationContext, "Login Failed", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, response.message(), Toast.LENGTH_SHORT).show()
                     }
                 }
             })
@@ -171,6 +188,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         if(!json.isNullOrEmpty())
         {
             user = gson.fromJson(json, CurrentUser::class.java)
+            loggedIn = true
         }
     }
 
@@ -182,6 +200,7 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
             remove(PREFS_STORE_USER)
             apply()
             Toast.makeText(applicationContext, "Logged out successfully", Toast.LENGTH_SHORT).show()
+            loggedIn = false
         }
 
     }
@@ -193,16 +212,9 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         startActivity(intent)
     }
 
-    private fun clearEmailAndPassword()
-    {
-        username = ""
-        password = ""
-    }
-
     private fun login()
     {
-        val dialog = LoginDialog(this)
-        dialog.show(supportFragmentManager, "Login Dialog")
+        networkLayer.launchOauth(this)
     }
 
     private fun inflateFragment()
@@ -210,21 +222,9 @@ class MainActivity : AppCompatActivity(), LoginDialog.LoginListener
         supportFragmentManager.beginTransaction().replace(container.id, RoomListFragment()).commit()
     }
 
-    override fun getEmailAndPassword(email: String, password: String)
-    {
-        username = email
-        this.password = password
-
-        progressDialog = ProgressDialog(this)
-        progressDialog.setMessage("Logging in...")
-        progressDialog.show()
-
-        doLogin()
-    }
-
     companion object
     {
-        val INTENT_PROFILE_KEY = "current_user"
-        val PREFS_STORE_USER = "stored_user"
+        const val INTENT_PROFILE_KEY = "current_user"
+        const val PREFS_STORE_USER = "stored_user"
     }
 }

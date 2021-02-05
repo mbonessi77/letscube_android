@@ -8,12 +8,15 @@ import retrofit2.http.*
 
 interface APIClass
 {
+    @Headers("Accept: application/json")
     @POST("oauth/token")
     @FormUrlEncoded
     fun getAccessToken(
-        @Field("username") username: String,
-        @Field("password") clientSecret: String,
-        @Field("grant_type") type: String
+        @Field("grant_type") type: String,
+        @Field("client_id") username: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("code") code: String,
+        @Field("redirect_uri") uri: String
     ) : Call<AccessToken>
 
 
